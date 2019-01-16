@@ -5,6 +5,9 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+const Promise = require("bluebird");
 
 
 const routes = require('./routes/index');
@@ -22,7 +25,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({origin: ['http://localhost:8080']}));
 
-app.use('/api/', routes);
+app.use('/', routes);
 
 
 app.use(function(req, res, next) {
@@ -36,9 +39,17 @@ app.use(function(err, req, res, next) {
     res.json(err);
 });
 
-app.listen(config.port, () =>{
-    console.info(`Server starting on the port ${config.port}`);
-});
+
+MongoClient.connect(config.url, { promiseLibrary: Promise, })
+    .catch(err => console.error(err.stack))
+    .then(db => {
+        global.db = db;
+        global.ObjectId = mongodb.ObjectId;
+        app.listen(config.port, () =>{
+            console.info(`Server starting on the port ${config.port}`);
+        });
+    });
+
 
 
 module.exports = app;
