@@ -29,7 +29,6 @@ class CRUD{
     }
 
     async update(query, data){
-        console.log(query, data);
         return await db.collection(this.collection).update(query, {$set: data}, { multi: true });
     }
 
@@ -74,14 +73,18 @@ class CRUD{
     }
 
     operand(data){
-        let query = {};
-        for(let item in data){
-            let obj = {};
-            if(!!~data[item].indexOf('$')){
-                data[item] = JSON.parse(data[item]);
-            };
+        try{
+            let query = {};
+            for(let item in data){
+                let obj = {};
+                if(!!~data[item].indexOf('$')){
+                    data[item] = JSON.parse(data[item]);
+                }
+            }
+            return data
+        }catch(err){
+            console.log(err)
         }
-        return data
     }
 
 }
