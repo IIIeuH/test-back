@@ -12,7 +12,7 @@ router.route('/:collection')
             let data = await task.read(req.query);
             res.json(data);
         }catch(err){
-            err
+            res.json(err);
         }
     })
     .post( async(req, res, next) => {
@@ -22,7 +22,7 @@ router.route('/:collection')
             let data = await task.creat(req.body);
             res.json(data);
         }catch(err){
-            err
+            res.json(err);
         }
     })
     .put( async(req, res, next) => {
